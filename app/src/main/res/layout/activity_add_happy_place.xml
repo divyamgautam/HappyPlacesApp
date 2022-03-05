@@ -76,6 +76,8 @@
             android:hint="Date"
             android:textSize="20sp"
             android:inputType="date"
+            android:focusable="false"
+            android:focusableInTouchMode="true"
             android:textColor="#7A8089"
             android:textColorHint="#7A8089"
             />
