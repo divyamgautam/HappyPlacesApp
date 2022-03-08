@@ -1,6 +1,7 @@
 package com.example.happyplacesapp
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
@@ -10,6 +11,7 @@ import android.media.audiofx.Equalizer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.provider.Settings
 import android.view.View
 import android.widget.Toast
@@ -23,6 +25,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
+import java.io.IOException
 import java.util.*
 
 class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
@@ -80,6 +83,23 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
 
     }
 
+    private override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode == GALLERY){
+                if(data != null){
+                    val contentURI = data.data
+                    try{
+                        val selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
+                        binding?.image?.setImageBitmap(selectedImageBitmap)
+                    }catch (e: IOException){
+                        e.printStackTrace()
+                        Toast.makeText(this@AddHappyPlaceActivity, "Failed to load image from gallery!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
     private fun choosePhotoFromGallery(){
         Dexter.withContext(this)
             .withPermissions(
@@ -90,7 +110,9 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
 
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if(report.areAllPermissionsGranted()){
-                        Toast.makeText(this@AddHappyPlaceActivity, "All Permissions Granted!!", Toast.LENGTH_SHORT).show()
+                        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                        startActivityForResult((galleryIntent, GALLERY)
+
                     }
                 }
 
@@ -117,5 +139,9 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
              dialog, _->
                 dialog.dismiss()
          }.show()
+    }
+
+    companion object{
+        private const val GALLERY = 1
     }
 }
