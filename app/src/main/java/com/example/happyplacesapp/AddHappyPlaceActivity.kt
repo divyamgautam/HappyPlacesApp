@@ -6,6 +6,7 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Bitmap
 import android.icu.text.SimpleDateFormat
 import android.media.audiofx.Equalizer
 import android.net.Uri
@@ -37,7 +38,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddHappyPlaceBinding.inflate(layoutInflater)
-        setSupportActionBar(binding?.toolbarAddPlace)
+        //setSupportActionBar(binding?.toolbarAddPlace)
         setContentView(binding?.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding?.toolbarAddPlace?.setNavigationOnClickListener {
@@ -69,7 +70,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                     _,which ->
                     when(which){
                         0 -> choosePhotoFromGallery()
-                        1 -> Toast.makeText(this,"Feature to b implemented soon",Toast.LENGTH_SHORT).show()
+                        1 -> takePhotoFromCamera()
                     }
                 }
             }
@@ -83,7 +84,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
 
     }
 
-    private override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK){
             if(requestCode == GALLERY){
@@ -97,6 +98,9 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                         Toast.makeText(this@AddHappyPlaceActivity, "Failed to load image from gallery!", Toast.LENGTH_SHORT).show()
                     }
                 }
+            }else if(requestCode == CAMERA){
+                val thumbnail: Bitmap = data!!.extras!!.get("data") as Bitmap
+                binding?.image?.setImageBitmap(thumbnail)
             }
         }
     }
@@ -111,16 +115,39 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if(report.areAllPermissionsGranted()){
                         val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                        startActivityForResult((galleryIntent, GALLERY)
+                        startActivityForResult(galleryIntent, GALLERY)
 
                     }
                 }
 
                 override fun onPermissionRationaleShouldBeShown(permission: MutableList<PermissionRequest>,token: PermissionToken) {
-                showRationaleForPermissions()
-            }
-        }).onSameThread().check()
+                    showRationaleForPermissions()
+                }
+            }).onSameThread().check()
     }
+
+    private fun takePhotoFromCamera(){
+        Dexter.withContext(this)
+            .withPermissions(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA
+            ).withListener(object: MultiplePermissionsListener{
+
+                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+                    if(report.areAllPermissionsGranted()){
+                        val galleryIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                        startActivityForResult(galleryIntent, CAMERA)
+
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(permission: MutableList<PermissionRequest>,token: PermissionToken) {
+                    showRationaleForPermissions()
+                }
+            }).onSameThread().check()
+    }
+
     private fun showRationaleForPermissions(){
          AlertDialog.Builder(this).setMessage(" " +
                  "Seems like you have not granted the required permissions"
@@ -143,5 +170,6 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
 
     companion object{
         private const val GALLERY = 1
+        private const val CAMERA = 2
     }
 }

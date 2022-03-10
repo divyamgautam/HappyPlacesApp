@@ -13,7 +13,6 @@ import com.example.happyplacesapp.databinding.ActivityMainBinding
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
-
         binding?.fabAddHappyPlace?.setOnClickListener {
             val intent = Intent(this, AddHappyPlaceActivity::class.java)
             startActivity(intent)
