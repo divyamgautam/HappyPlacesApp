@@ -5,6 +5,8 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.icu.text.SimpleDateFormat
@@ -26,7 +28,10 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import java.util.*
 
 class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
@@ -52,7 +57,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
             updateDateInView()
         }
         binding?.date?.setOnClickListener(this)
-        binding?.llImage?.setOnClickListener(this)
+        binding?.tvSelect?.setOnClickListener(this)
     }
 
     //Implementing the onCLickListener for the TILs in the activity
@@ -62,7 +67,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                 DatePickerDialog(this@AddHappyPlaceActivity, dateSetListener, cal.get(Calendar.YEAR),
                     cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH))
             }
-            binding?.llImage -> {
+            binding?.tvSelect -> {
                 val pictureDialog = AlertDialog.Builder(this)
                 pictureDialog.setTitle("Select Action")
                 val pictureDialogItems = arrayOf("Select Photo from Gallery", "Capture Photo from Camera")
@@ -92,6 +97,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                     val contentURI = data.data
                     try{
                         val selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
+                        saveImage(selectedImageBitmap)
                         binding?.image?.setImageBitmap(selectedImageBitmap)
                     }catch (e: IOException){
                         e.printStackTrace()
@@ -100,6 +106,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                 }
             }else if(requestCode == CAMERA){
                 val thumbnail: Bitmap = data!!.extras!!.get("data") as Bitmap
+                saveImage(thumbnail)
                 binding?.image?.setImageBitmap(thumbnail)
             }
         }
@@ -168,8 +175,24 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
          }.show()
     }
 
+    private fun saveImage(bitmap: Bitmap):Uri{
+        val wrapper = ContextWrapper(applicationContext)
+        var file = wrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE)
+        file = File(file,"${UUID.randomUUID()}.jpg")
+
+        try{
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+        return Uri.parse(file.absolutePath)
+    }
     companion object{
         private const val GALLERY = 1
         private const val CAMERA = 2
+        private const val IMAGE_DIRECTORY = "HappyPlacesImages"
     }
 }
