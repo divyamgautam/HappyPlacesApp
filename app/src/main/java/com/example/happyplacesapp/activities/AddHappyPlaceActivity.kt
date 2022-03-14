@@ -1,4 +1,4 @@
-package com.example.happyplacesapp
+package com.example.happyplacesapp.activities
 
 import android.Manifest
 import android.app.Activity
@@ -9,8 +9,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
-import android.icu.text.SimpleDateFormat
-import android.media.audiofx.Equalizer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -19,15 +17,11 @@ import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import com.example.happyplacesapp.databinding.ActivityAddHappyPlaceBinding
-import com.example.happyplacesapp.databinding.ActivityMainBinding
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.karumi.dexter.listener.single.PermissionListener
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -39,6 +33,11 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
     private var binding: ActivityAddHappyPlaceBinding? = null
     private var cal = Calendar.getInstance()
     private lateinit var dateSetListener: DatePickerDialog.OnDateSetListener
+    private var saveImageToInternalStorage: Uri? = null
+    private var mLatitude: Double = 0.0
+    private var mLongitude: Double = 0.0
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +49,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
             onBackPressed()
         }
 
-        dateSetListener = DatePickerDialog.OnDateSetListener{view, year, month, dayOfMonth ->
+        dateSetListener = DatePickerDialog.OnDateSetListener{_, year, month, dayOfMonth ->
             cal.set(Calendar.YEAR, year)
             cal.set(Calendar.MONTH, month)
             cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
@@ -58,12 +57,13 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
         }
         binding?.date?.setOnClickListener(this)
         binding?.tvSelect?.setOnClickListener(this)
+        binding?.btnAdd?.setOnClickListener(this)
     }
 
     //Implementing the onCLickListener for the TILs in the activity
     override fun onClick(v: View?) {
         when(v!!){
-            binding?.date -> {
+            binding?.tilDate-> {
                 DatePickerDialog(this@AddHappyPlaceActivity, dateSetListener, cal.get(Calendar.YEAR),
                     cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH))
             }
@@ -78,6 +78,9 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                         1 -> takePhotoFromCamera()
                     }
                 }
+            }
+            binding?.btnAdd ->{
+
             }
         }
     }
@@ -97,7 +100,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                     val contentURI = data.data
                     try{
                         val selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
-                        saveImage(selectedImageBitmap)
+                        saveImageToInternalStorage = saveImageToInternalStorage(selectedImageBitmap)
                         binding?.image?.setImageBitmap(selectedImageBitmap)
                     }catch (e: IOException){
                         e.printStackTrace()
@@ -106,7 +109,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                 }
             }else if(requestCode == CAMERA){
                 val thumbnail: Bitmap = data!!.extras!!.get("data") as Bitmap
-                saveImage(thumbnail)
+                saveImageToInternalStorage = saveImageToInternalStorage(thumbnail)
                 binding?.image?.setImageBitmap(thumbnail)
             }
         }
@@ -175,7 +178,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
          }.show()
     }
 
-    private fun saveImage(bitmap: Bitmap):Uri{
+    private fun saveImageToInternalStorage(bitmap: Bitmap):Uri{
         val wrapper = ContextWrapper(applicationContext)
         var file = wrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE)
         file = File(file,"${UUID.randomUUID()}.jpg")
