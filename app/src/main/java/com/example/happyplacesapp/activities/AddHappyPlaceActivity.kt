@@ -16,7 +16,10 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isEmpty
+import com.example.happyplacesapp.database.DatabaseHandler
 import com.example.happyplacesapp.databinding.ActivityAddHappyPlaceBinding
+import com.example.happyplacesapp.models.HappyPlaceModel
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -55,6 +58,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
             cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
             updateDateInView()
         }
+        updateDateInView()
         binding?.date?.setOnClickListener(this)
         binding?.tvSelect?.setOnClickListener(this)
         binding?.btnAdd?.setOnClickListener(this)
@@ -80,7 +84,36 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                 }
             }
             binding?.btnAdd ->{
+              when{
+                  binding?.title?.text.isNullOrEmpty() -> {
+                      Toast.makeText(this, "Please enter a title", Toast.LENGTH_SHORT).show()
+                  }
+                  binding?.description?.text.isNullOrEmpty() -> {
+                      Toast.makeText(this, "Please enter a description", Toast.LENGTH_SHORT).show()
+                  }
+                  binding?.location?.text.isNullOrEmpty() -> {
+                      Toast.makeText(this, "Please enter a location", Toast.LENGTH_SHORT).show()
+                  }
+                  saveImageToInternalStorage == null ->{
+                      Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
+                  }else->{
+                         val happyPlaceModel = HappyPlaceModel(0,
+                            binding?.title?.text.toString(),
+                            saveImageToInternalStorage.toString(),
+                            binding?.description?.text.toString(),
+                            binding?.date?.text.toString(),
+                            binding?.location?.text.toString(),
+                            mLatitude,
+                            mLongitude)
 
+                         val dbHandler = DatabaseHandler(this)
+                         val addHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
+                         if (addHappyPlace > 0){
+                             Toast.makeText(this, "Happy Place Added!!", Toast.LENGTH_SHORT).show()
+                             finish()
+                         }
+                  }
+              }
             }
         }
     }
