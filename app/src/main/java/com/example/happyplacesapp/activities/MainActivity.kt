@@ -4,7 +4,9 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.happyplacesapp.activities.AddHappyPlaceActivity
+import com.example.happyplacesapp.database.DatabaseHandler
 import com.example.happyplacesapp.databinding.ActivityMainBinding
+import com.example.happyplacesapp.models.HappyPlaceModel
 
    class MainActivity : AppCompatActivity() {
 
@@ -18,5 +20,11 @@ import com.example.happyplacesapp.databinding.ActivityMainBinding
             val intent = Intent(this, AddHappyPlaceActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private fun getHappyPlacesFromLocalDB(){
+        val dbHandler = DatabaseHandler(this)
+        val getHappyPlaceList: ArrayList<HappyPlaceModel> = dbHandler.getHappyPlacesList()
+
     }
 }
