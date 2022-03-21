@@ -25,6 +25,5 @@ import com.example.happyplacesapp.models.HappyPlaceModel
     private fun getHappyPlacesFromLocalDB(){
         val dbHandler = DatabaseHandler(this)
         val getHappyPlaceList: ArrayList<HappyPlaceModel> = dbHandler.getHappyPlacesList()
-
     }
 }
