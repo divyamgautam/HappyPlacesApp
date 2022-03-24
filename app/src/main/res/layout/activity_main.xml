@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         tools:visibility="gone"
-        android:id="@+id/frvHappyPlaces"/>
+        android:id="@+id/rvHappyPlaces"/>
 
     <TextView
         android:id="@+id/tvNoRecords"
