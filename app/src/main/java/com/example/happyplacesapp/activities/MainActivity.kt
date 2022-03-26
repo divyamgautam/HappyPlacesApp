@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.happyplacesapp.activities.AddHappyPlaceActivity
+//import com.example.happyplacesapp.activities.AddHappyPlaceActivity
 import com.example.happyplacesapp.adapters.HappyPlacesAdapter
 import com.example.happyplacesapp.database.DatabaseHandler
 import com.example.happyplacesapp.databinding.ActivityMainBinding
