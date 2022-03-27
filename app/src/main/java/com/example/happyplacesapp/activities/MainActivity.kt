@@ -31,6 +31,12 @@ import com.example.happyplacesapp.models.HappyPlaceModel
             binding?.rvHappyPlaces?.setHasFixedSize(true)
             val placesAdapter = HappyPlacesAdapter(this, happyPlaceList)
             binding?.rvHappyPlaces?.adapter = placesAdapter
+            placesAdapter.setOnClickListener(object : HappyPlacesAdapter.onClickListener{
+                override fun onClick(position: Int, model: HappyPlaceModel) {
+                    val intent = Intent(this@MainActivity, HappyPlaceDetailActivity:: class.java)
+                    startActivity(intent)
+                }
+            })
 
         }
 

@@ -15,7 +15,7 @@ open class HappyPlacesAdapter(
     private var list: ArrayList<HappyPlaceModel>
     ): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
-    private class myViewHolder(view: View): RecyclerView.ViewHolder(view)
+    private var onClickListen: onClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return myViewHolder(
@@ -33,7 +33,17 @@ open class HappyPlacesAdapter(
         }
     }
 
+    fun setOnClickListener(onClickListener: onClickListener){
+        this.onClickListen = onClickListener
+    }
+
+    interface onClickListener{
+        fun onClick(position:Int, model: HappyPlaceModel)
+    }
+
     override fun getItemCount(): Int {
         return list.size
     }
+    private class myViewHolder(view: View): RecyclerView.ViewHolder(view)
+
 }
