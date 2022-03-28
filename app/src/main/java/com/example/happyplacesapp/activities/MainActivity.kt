@@ -34,6 +34,7 @@ import com.example.happyplacesapp.models.HappyPlaceModel
             placesAdapter.setOnClickListener(object : HappyPlacesAdapter.onClickListener{
                 override fun onClick(position: Int, model: HappyPlaceModel) {
                     val intent = Intent(this@MainActivity, HappyPlaceDetailActivity:: class.java)
+                    intent.putExtra(EXTRA_PLACE_DETAILS, model)
                     startActivity(intent)
                 }
             })
@@ -64,5 +65,6 @@ import com.example.happyplacesapp.models.HappyPlaceModel
        }
         companion object{
             var ADD_HAPPY_PLACE_REQUEST_CODE = 1
+            var EXTRA_PLACE_DETAILS = "extra_place_details"
         }
 }

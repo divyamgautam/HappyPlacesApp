@@ -30,6 +30,12 @@ open class HappyPlacesAdapter(
             holder.itemView.ivPlaceImage.setImageURI(Uri.parse(model.image))
             holder.itemView.tvTitle.text = model.title
             holder.itemView.tvDescription.text = model.description
+            holder.itemView.setOnClickListener {
+                if(onClickListen != null){
+                    onClickListen!!.onClick(position,model)
+                    
+                }
+            }
         }
     }
 
