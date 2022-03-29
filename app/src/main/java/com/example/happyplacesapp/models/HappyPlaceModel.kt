@@ -1,5 +1,4 @@
 package com.example.happyplacesapp.models
-
 import java.io.Serializable
 
 data class HappyPlaceModel (
