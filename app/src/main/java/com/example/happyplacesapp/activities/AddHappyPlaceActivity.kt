@@ -39,6 +39,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
     private var saveImageToInternalStorage: Uri? = null
     private var mLatitude: Double = 0.0
     private var mLongitude: Double = 0.0
+    private var mHappyPlaceDetails: HappyPlaceModel? = null
 
 
 
@@ -52,6 +53,10 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
             onBackPressed()
         }
 
+        if(intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)){
+            mHappyPlaceDetails = intent.getSerializableExtra(MainActivity.EXTRA_PLACE_DETAILS) as HappyPlaceModel
+        }
+
         dateSetListener = DatePickerDialog.OnDateSetListener{_, year, month, dayOfMonth ->
             cal.set(Calendar.YEAR, year)
             cal.set(Calendar.MONTH, month)
@@ -59,6 +64,16 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
             updateDateInView()
         }
         updateDateInView()
+        if(mHappyPlaceDetails != null){
+            supportActionBar?.title = "Edit Happy Place"
+            binding?.title?.setText(mHappyPlaceDetails!!.title)
+            binding?.description?.setText(mHappyPlaceDetails!!.description)
+            binding?.date?.setText(mHappyPlaceDetails!!.date)
+            binding?.location?.setText(mHappyPlaceDetails!!.location)
+            saveImageToInternalStorage = Uri.parse(mHappyPlaceDetails!!.image)
+            binding?.image?.setImageURI(saveImageToInternalStorage)
+            binding?.btnAdd?.setText("UPDATE")
+        }
         binding?.date?.setOnClickListener(this)
         binding?.tvSelect?.setOnClickListener(this)
         binding?.btnAdd?.setOnClickListener(this)
