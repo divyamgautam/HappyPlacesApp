@@ -16,7 +16,6 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.view.View
 import android.widget.Toast
-import androidx.core.view.isEmpty
 import com.example.happyplacesapp.database.DatabaseHandler
 import com.example.happyplacesapp.databinding.ActivityAddHappyPlaceBinding
 import com.example.happyplacesapp.models.HappyPlaceModel
@@ -112,7 +111,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                   saveImageToInternalStorage == null ->{
                       Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
                   }else->{
-                         val happyPlaceModel = HappyPlaceModel(0,
+                         val happyPlaceModel = HappyPlaceModel(if(mHappyPlaceDetails == null) 0 else mHappyPlaceDetails!!.id,
                             binding?.title?.text.toString(),
                             saveImageToInternalStorage.toString(),
                             binding?.description?.text.toString(),
@@ -122,10 +121,18 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                             mLongitude)
 
                          val dbHandler = DatabaseHandler(this)
+
+                         if(mHappyPlaceDetails == null){
                          val addHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
                          if (addHappyPlace > 0){
                              setResult(Activity.RESULT_OK)
                              finish()
+                         }}else{
+                             val updateHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
+                             if(updateHappyPlace > 0){
+                                 setResult(Activity.RESULT_OK)
+                                 finish()
+                             }
                          }
                   }
               }
