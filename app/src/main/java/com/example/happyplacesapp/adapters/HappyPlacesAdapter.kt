@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.happyplacesapp.R
 import com.example.happyplacesapp.activities.AddHappyPlaceActivity
 import com.example.happyplacesapp.activities.MainActivity
+import com.example.happyplacesapp.database.DatabaseHandler
 import com.example.happyplacesapp.models.HappyPlaceModel
 import kotlinx.android.synthetic.main.happy_place.view.*
 
@@ -19,7 +20,7 @@ open class HappyPlacesAdapter(
     private var list: ArrayList<HappyPlaceModel>
     ): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
-    private var onClickListen: onClickListener? = null
+    private var onClickListen: OnClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return myViewHolder(
@@ -43,11 +44,11 @@ open class HappyPlacesAdapter(
         }
     }
 
-    fun setOnClickListener(onClickListener: onClickListener){
+    fun setOnClickListener(onClickListener: OnClickListener){
         this.onClickListen = onClickListener
     }
 
-    interface onClickListener{
+    interface OnClickListener{
         fun onClick(position:Int, model: HappyPlaceModel)
     }
 
@@ -57,6 +58,17 @@ open class HappyPlacesAdapter(
         activity.startActivityForResult(intent, requestCode)
         notifyItemChanged(position)
     }
+
+    fun removeAt(position: Int){
+        val dbHandler = DatabaseHandler(context)
+        val isDeleted = dbHandler.deleteHappyPlace(list[position])
+        if(isDeleted > 0){
+            list.removeAt(position)
+            notifyItemRemoved(position)
+        }
+    }
+
+
     override fun getItemCount(): Int {
         return list.size
     }

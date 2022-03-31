@@ -1,4 +1,4 @@
-package com.example.happyplacesapp.utils
+package pl.kitek.rvswipetodelete
 
 import android.content.Context
 import android.graphics.*
@@ -8,13 +8,13 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.happyplacesapp.R
 
-abstract class SwipeToEditCallback(context: Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+abstract class SwipeToDeleteCallback(context: Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
-    private val editIcon = ContextCompat.getDrawable(context, R.drawable.ic_baseline_edit_24)
-    private val intrinsicWidth = editIcon!!.intrinsicWidth
-    private val intrinsicHeight = editIcon!!.intrinsicHeight
+    private val deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_baseline_delete_24)
+    private val intrinsicWidth = deleteIcon!!.intrinsicWidth
+    private val intrinsicHeight = deleteIcon!!.intrinsicHeight
     private val background = ColorDrawable()
-    private val backgroundColor = Color.parseColor("#24AE05")
+    private val backgroundColor = Color.parseColor("#F44336")
     private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
 
 
@@ -53,8 +53,8 @@ abstract class SwipeToEditCallback(context: Context) : ItemTouchHelper.SimpleCal
         val editIconRight = itemView.left + editIconMargin
         val editIconBottom = editIconTop + intrinsicHeight
 
-        editIcon!!.setBounds(editIconLeft, editIconTop, editIconRight, editIconBottom)
-        editIcon.draw(c)
+        deleteIcon!!.setBounds(editIconLeft, editIconTop, editIconRight, editIconBottom)
+        deleteIcon.draw(c)
 
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
