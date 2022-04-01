@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">HappyPlacesApp</string>
     <string name="no_happy_place_found_yet_add_a_happy_place">No Happy Places found yet. Add a Happy Place!!</string>
+    <string name="google_maps_api_key">AIzaSyDKWY0HJTbN36ZCkqliuUUhfYQJY1k8Z7o</string>
 </resources>
