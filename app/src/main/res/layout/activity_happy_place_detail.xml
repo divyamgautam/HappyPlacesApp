@@ -53,5 +53,16 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_description"
         android:layout_marginTop="8dp"
         />
+    <Button
+        android:id="@+id/btnMap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="50dp"
+        android:backgroundTint="@color/colour_primary"
+        app:layout_constraintTop_toBottomOf="@id/tv_description"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="VIEW ON MAP"
+        android:textStyle="bold"
+        android:textSize="18sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
