@@ -16,9 +16,14 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.view.View
 import android.widget.Toast
+import com.example.happyplacesapp.R
 import com.example.happyplacesapp.database.DatabaseHandler
 import com.example.happyplacesapp.databinding.ActivityAddHappyPlaceBinding
 import com.example.happyplacesapp.models.HappyPlaceModel
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -52,6 +57,10 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
             onBackPressed()
         }
 
+        if(!Places.isInitialized()){
+            Places.initialize(this@AddHappyPlaceActivity, resources.getString(R.string.google_maps_api_key))
+        }
+
         if(intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)){
             mHappyPlaceDetails = intent.getSerializableExtra(MainActivity.EXTRA_PLACE_DETAILS) as HappyPlaceModel
         }
@@ -76,6 +85,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
         binding?.date?.setOnClickListener(this)
         binding?.tvSelect?.setOnClickListener(this)
         binding?.btnAdd?.setOnClickListener(this)
+        binding?.location?.setOnClickListener(this)
     }
 
     //Implementing the onCLickListener for the TILs in the activity
@@ -137,6 +147,18 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                   }
               }
             }
+            binding?.location ->{
+                try {
+                    val fiels = listOf(
+                        Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS
+                    )
+                    val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fiels)
+                        .build(this@AddHappyPlaceActivity)
+                    startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE)
+                }catch (e: Exception){
+                    e.printStackTrace()
+                }
+            }
         }
     }
     //Printing out/showing the selected date in text input layout for date
@@ -166,6 +188,11 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                 val thumbnail: Bitmap = data!!.extras!!.get("data") as Bitmap
                 saveImageToInternalStorage = saveImageToInternalStorage(thumbnail)
                 binding?.image?.setImageBitmap(thumbnail)
+            }else if(requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE){
+                val place: Place = Autocomplete.getPlaceFromIntent(data!!)
+                binding?.location?.setText(place.address)
+                mLatitude = place.latLng!!.latitude
+                mLongitude = place.latLng!!.longitude
             }
         }
     }
@@ -252,5 +279,6 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
         private const val GALLERY = 1
         private const val CAMERA = 2
         private const val IMAGE_DIRECTORY = "HappyPlacesImages"
+        private const val PLACE_AUTOCOMPLETE_REQUEST_CODE = 3
     }
 }

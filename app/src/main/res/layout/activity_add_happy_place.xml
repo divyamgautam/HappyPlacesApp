@@ -99,6 +99,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Location"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:textSize="18sp"
             android:textColorHint="#7A8089"
             />
