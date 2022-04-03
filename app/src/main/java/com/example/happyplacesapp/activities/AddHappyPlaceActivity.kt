@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
+import android.location.LocationManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,6 +17,7 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.getSystemService
 import com.example.happyplacesapp.R
 import com.example.happyplacesapp.database.DatabaseHandler
 import com.example.happyplacesapp.databinding.ActivityAddHappyPlaceBinding
@@ -86,15 +88,23 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
         binding?.tvSelect?.setOnClickListener(this)
         binding?.btnAdd?.setOnClickListener(this)
         binding?.location?.setOnClickListener(this)
+        binding?.currentLocation?.setOnClickListener(this)
+    }
+
+    private fun isLocationEnabled(): Boolean{
+        val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
     //Implementing the onCLickListener for the TILs in the activity
     override fun onClick(v: View?) {
         when(v!!){
+
             binding?.tilDate-> {
                 DatePickerDialog(this@AddHappyPlaceActivity, dateSetListener, cal.get(Calendar.YEAR),
                     cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH))
             }
+
             binding?.tvSelect -> {
                 val pictureDialog = AlertDialog.Builder(this)
                 pictureDialog.setTitle("Select Action")
@@ -107,46 +117,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                     }
                 }
             }
-            binding?.btnAdd ->{
-              when{
-                  binding?.title?.text.isNullOrEmpty() -> {
-                      Toast.makeText(this, "Please enter a title", Toast.LENGTH_SHORT).show()
-                  }
-                  binding?.description?.text.isNullOrEmpty() -> {
-                      Toast.makeText(this, "Please enter a description", Toast.LENGTH_SHORT).show()
-                  }
-                  binding?.location?.text.isNullOrEmpty() -> {
-                      Toast.makeText(this, "Please enter a location", Toast.LENGTH_SHORT).show()
-                  }
-                  saveImageToInternalStorage == null ->{
-                      Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
-                  }else->{
-                         val happyPlaceModel = HappyPlaceModel(if(mHappyPlaceDetails == null) 0 else mHappyPlaceDetails!!.id,
-                            binding?.title?.text.toString(),
-                            saveImageToInternalStorage.toString(),
-                            binding?.description?.text.toString(),
-                            binding?.date?.text.toString(),
-                            binding?.location?.text.toString(),
-                            mLatitude,
-                            mLongitude)
 
-                         val dbHandler = DatabaseHandler(this)
-
-                         if(mHappyPlaceDetails == null){
-                         val addHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
-                         if (addHappyPlace > 0){
-                             setResult(Activity.RESULT_OK)
-                             finish()
-                         }}else{
-                             val updateHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
-                             if(updateHappyPlace > 0){
-                                 setResult(Activity.RESULT_OK)
-                                 finish()
-                             }
-                         }
-                  }
-              }
-            }
             binding?.location ->{
                 try {
                     val fiels = listOf(
@@ -158,6 +129,74 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                 }catch (e: Exception){
                     e.printStackTrace()
                 }
+            }
+
+            binding?.btnAdd ->{
+                when{
+                    binding?.title?.text.isNullOrEmpty() -> {
+                        Toast.makeText(this, "Please enter a title", Toast.LENGTH_SHORT).show()
+                    }
+                    binding?.description?.text.isNullOrEmpty() -> {
+                        Toast.makeText(this, "Please enter a description", Toast.LENGTH_SHORT).show()
+                    }
+                    binding?.location?.text.isNullOrEmpty() -> {
+                        Toast.makeText(this, "Please enter a location", Toast.LENGTH_SHORT).show()
+                    }
+                    saveImageToInternalStorage == null ->{
+                        Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
+                    }else->{
+                    val happyPlaceModel = HappyPlaceModel(if(mHappyPlaceDetails == null) 0 else mHappyPlaceDetails!!.id,
+                        binding?.title?.text.toString(),
+                        saveImageToInternalStorage.toString(),
+                        binding?.description?.text.toString(),
+                        binding?.date?.text.toString(),
+                        binding?.location?.text.toString(),
+                        mLatitude,
+                        mLongitude)
+
+                    val dbHandler = DatabaseHandler(this)
+
+                    if(mHappyPlaceDetails == null){
+                        val addHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
+                        if (addHappyPlace > 0){
+                            setResult(Activity.RESULT_OK)
+                            finish()
+                        }}else{
+                        val updateHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
+                        if(updateHappyPlace > 0){
+                            setResult(Activity.RESULT_OK)
+                            finish()
+                        }
+                    }
+                }
+                }
+            }
+
+            binding?.currentLocation ->{
+                if(!isLocationEnabled()){
+                    Toast.makeText(this, "Your location provider is turned off, please turn it on!", Toast.LENGTH_LONG).show()
+                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    startActivity(intent)
+                }else{
+                    Dexter.withActivity(this).withPermissions(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)
+                        .withListener(object : MultiplePermissionsListener{
+                            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                                if(report!!.areAllPermissionsGranted()){
+                                    Toast.makeText(this@AddHappyPlaceActivity, "Location Permission Granted", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
+                            override fun onPermissionRationaleShouldBeShown(
+                                permissions: MutableList<PermissionRequest>?,
+                                token: PermissionToken?
+                            ) {
+                                showRationaleForPermissions()
+                            }
+                        }).onSameThread().check()
+                }
+
             }
         }
     }

@@ -82,7 +82,8 @@
             android:inputType="date"
             android:focusable="false"
             android:focusableInTouchMode="true"
-            android:textColor="@color/colour_primary"            android:textColorHint="#7A8089"
+            android:textColor="@color/colour_primary"
+            android:textColorHint="#7A8089"
             />
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
@@ -107,14 +108,25 @@
             />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <Button
+        android:id="@+id/currentLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="SELECT CURRENT LOCATION"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/colour_secondary"
+        android:layout_margin="20dp"
+        android:layout_below="@id/tilLocation" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/tilLocation"
+        android:layout_below="@+id/currentLocation"
         android:layout_margin="20dp"
-        android:id="@+id/llImage"
-       >
+        android:id="@+id/llImage">
 
         <ImageView
             android:id="@+id/image"
