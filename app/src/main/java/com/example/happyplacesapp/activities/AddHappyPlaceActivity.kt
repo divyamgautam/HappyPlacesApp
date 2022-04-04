@@ -10,6 +10,7 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.location.LocationManager
+import android.location.LocationRequest
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -22,6 +23,8 @@ import com.example.happyplacesapp.R
 import com.example.happyplacesapp.database.DatabaseHandler
 import com.example.happyplacesapp.databinding.ActivityAddHappyPlaceBinding
 import com.example.happyplacesapp.models.HappyPlaceModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -46,6 +49,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
     private var mLatitude: Double = 0.0
     private var mLongitude: Double = 0.0
     private var mHappyPlaceDetails: HappyPlaceModel? = null
+    private lateinit var mFusedLocationClient: FusedLocationProviderClient
 
 
 
@@ -58,6 +62,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
         binding?.toolbarAddPlace?.setNavigationOnClickListener {
             onBackPressed()
         }
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         if(!Places.isInitialized()){
             Places.initialize(this@AddHappyPlaceActivity, resources.getString(R.string.google_maps_api_key))
@@ -89,6 +95,10 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
         binding?.btnAdd?.setOnClickListener(this)
         binding?.location?.setOnClickListener(this)
         binding?.currentLocation?.setOnClickListener(this)
+    }
+
+    private fun requestNewLocationData(){
+
     }
 
     private fun isLocationEnabled(): Boolean{
