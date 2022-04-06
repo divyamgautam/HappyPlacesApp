@@ -1,6 +1,7 @@
 package com.example.happyplacesapp.activities
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
@@ -9,12 +10,15 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
+import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.getSystemService
@@ -22,10 +26,8 @@ import com.example.happyplacesapp.R
 import com.example.happyplacesapp.database.DatabaseHandler
 import com.example.happyplacesapp.databinding.ActivityAddHappyPlaceBinding
 import com.example.happyplacesapp.models.HappyPlaceModel
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
+import com.example.happyplacesapp.utils.GetAddressFromLatLng
+import com.google.android.gms.location.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -103,11 +105,32 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
         val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
-
+    @SuppressLint("MissingPermission")
     private fun requestNewLocationData(){
         var mLocationRequest = LocationRequest()
         mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        mLocationRequest.interval = 1000
+        mLocationRequest.numUpdates = 1
 
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper()!!)
+
+    }
+
+    private val mLocationCallback = object : LocationCallback(){
+        override fun onLocationResult(locationResult: LocationResult) {
+            val mLastLocation: Location = locationResult.lastLocation
+            mLatitude = mLastLocation.latitude
+            mLongitude = mLastLocation.longitude
+            val addressTask = GetAddressFromLatLng(this@AddHappyPlaceActivity, mLatitude, mLongitude)
+            addressTask.setAddressListener(object: GetAddressFromLatLng.AddressListener{
+                override fun onAddressFound(address: String){
+                    binding?.location?.setText(address)
+                }
+                override fun onError(){
+                    Log.e("Get Address::", "Something went wrong")
+                }
+            })
+        }
     }
 
     //Implementing the onCLickListener for the TILs in the activity
@@ -134,10 +157,10 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
 
             binding?.location ->{
                 try {
-                    val fiels = listOf(
+                    val fields = listOf(
                         Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS
                     )
-                    val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fiels)
+                    val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
                         .build(this@AddHappyPlaceActivity)
                     startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE)
                 }catch (e: Exception){
@@ -197,8 +220,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                         Manifest.permission.ACCESS_COARSE_LOCATION)
                         .withListener(object : MultiplePermissionsListener{
                             override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                                if(report!!.areAllPermissionsGranted()){
-                                    Toast.makeText(this@AddHappyPlaceActivity, "Location Permission Granted", Toast.LENGTH_SHORT).show()
+                                if(report!!.areAllPermissionsGranted()){ Toast.makeText(this@AddHappyPlaceActivity, "Location Permission Granted", Toast.LENGTH_SHORT).show()
+                                    requestNewLocationData()
                                 }
                             }
 
