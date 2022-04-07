@@ -9,7 +9,7 @@
         android:id="@+id/toolbar_activity_map"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colour_primary"
+        android:background="#276FAF"
         android:theme="@style/CustomToolbarStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

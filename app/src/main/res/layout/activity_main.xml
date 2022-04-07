@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/happy_places"
     tools:context=".activities.MainActivity">
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
@@ -12,20 +13,49 @@
         tools:visibility="gone"
         android:id="@+id/rvHappyPlaces"/>
 
-    <TextView
-        android:id="@+id/tvNoRecords"
+    <LinearLayout
+        android:id="@+id/llNoPlace"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/no_happy_place_found_yet_add_a_happy_place"
-        android:textSize="16sp" />
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center"
+            android:gravity="center"
+            android:text="Uh oh..."
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="400dp"
+            android:layout_height="400dp"
+            android:layout_gravity="center"
+            android:src="@drawable/location"
+            android:contentDescription="Add Happy Place Image"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:gravity="center"
+            android:text="No Happy Places found!!"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddHappyPlace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/fabAddHappyPlace"
+        android:backgroundTint="#276FAF"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_baseline_add_24"/>
+        app:srcCompat="@drawable/ic_baseline_add_24" />
 
 </FrameLayout>

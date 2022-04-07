@@ -4,41 +4,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.AddHappyPlaceActivity">
+    tools:context=".activities.AddHappyPlaceActivity"
+    android:background="@drawable/happy_places"
+    >
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_add_place"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colour_primary"
+        android:background="#276FAF"
         android:theme="@style/CustomToolbarStyle"
-        app:layout_constraintBottom_toTopOf="@+id/tilTitle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        />
 
-    <com.google.android.material.textfield.TextInputLayout
+    <TextView
+        android:layout_marginTop="200dp"
+        android:id="@+id/tvAdd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        app:boxStrokeColor="@color/colour_primary"
+        android:textSize="24sp"
+        android:textColor="#276FAF"
+        android:textStyle="bold"
         android:layout_margin="20dp"
-        android:id="@+id/tilTitle"
-        android:background="@color/light_grey"
-        android:layout_below="@+id/toolbar_add_place"
+        android:text="ADD HAPPY PLACE"
+        android:gravity="center"/>
 
-       >
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:boxStrokeColor="#276FAF"
+        android:id="@+id/tilTitle"
+        android:layout_below="@+id/tvAdd"
+        >
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:hint="Title"
             android:textSize="18sp"
-            android:textColor="@color/colour_primary"
-            android:textColorHint="#7A8089" />
+            android:textColorHint="#276FAF" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -47,20 +55,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tilTitle"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:background="@color/light_grey"
-        app:boxStrokeColor="@color/colour_primary">
+        android:layout_margin="10dp"
+        app:boxStrokeColor="#276FAF">
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Description"
-            android:textColor="@color/colour_primary"
-            android:textColorHint="#7A8089"
+            android:textColor="@color/black"
+            android:textColorHint="#276FAF"
             android:textSize="18sp" />
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
@@ -68,32 +72,30 @@
         android:layout_height="wrap_content"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:id="@+id/tilDate"
-        app:boxStrokeColor="@color/colour_primary"
-        android:layout_margin="20dp"
-        android:background="@color/light_grey"
+        app:boxStrokeColor="#276FAF"
+        android:layout_margin="10dp"
         android:layout_below="@+id/tilDescription"
         >
+
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Date"
-            android:textSize="18sp"
-            android:inputType="date"
             android:focusable="false"
             android:focusableInTouchMode="true"
-            android:textColor="@color/colour_primary"
-            android:textColorHint="#7A8089"
-            />
+            android:hint="Date"
+            android:textColor="@color/black"
+            android:inputType="date"
+            android:textColorHint="#276FAF"
+            android:textSize="18sp" />
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:id="@+id/tilLocation"
-        app:boxStrokeColor="@color/colour_primary"
-        android:layout_margin="20dp"
-        android:background="@color/light_grey"
+        app:boxStrokeColor="#276FAF"
+        android:layout_margin="10dp"
         android:layout_below="@+id/tilDate"
         >
         <androidx.appcompat.widget.AppCompatEditText
@@ -102,9 +104,10 @@
             android:layout_height="wrap_content"
             android:hint="Location"
             android:focusable="false"
+            android:textColor="@color/black"
             android:focusableInTouchMode="false"
             android:textSize="18sp"
-            android:textColorHint="#7A8089"
+            android:textColorHint="#276FAF"
             />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -116,9 +119,10 @@
         android:textStyle="bold"
         android:text="SELECT CURRENT LOCATION"
         android:textColor="@color/white"
-        android:backgroundTint="@color/colour_secondary"
-        android:layout_margin="20dp"
-        android:layout_below="@id/tilLocation" />
+        android:backgroundTint="#96C8F5"
+        android:layout_margin="10dp"
+        android:layout_below="@id/tilLocation"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -133,7 +137,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_weight="0.5"
-            app:srcCompat="@drawable/ic_baseline_image_24" />
+            android:src="@drawable/image" />
 
 
         <TextView
@@ -157,15 +161,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/llImage"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:backgroundTint="@color/colour_primary"
+        android:layout_margin="10dp"
+        android:backgroundTint="#3A81C0"
         android:gravity="center"
         android:text="ADD LOCATION"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -69,11 +69,11 @@ import com.example.happyplacesapp.utils.SwipeToEditCallback
             val getHappyPlaceList: ArrayList<HappyPlaceModel> = dbHandler.getHappyPlacesList()
             if(getHappyPlaceList.size > 0){
                 binding?.rvHappyPlaces?.visibility = View.VISIBLE
-                binding?.tvNoRecords?.visibility = View.GONE
+                binding?.llNoPlace?.visibility = View.GONE
                 setUpHappyPlaceRV(getHappyPlaceList)
             }else{
                 binding?.rvHappyPlaces?.visibility = View.GONE
-                binding?.tvNoRecords?.visibility = View.VISIBLE
+                binding?.llNoPlace?.visibility = View.VISIBLE
             }
         }
        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -101,37 +101,6 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
         binding?.currentLocation?.setOnClickListener(this)
     }
 
-    private fun isLocationEnabled(): Boolean{
-        val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-    }
-    @SuppressLint("MissingPermission")
-    private fun requestNewLocationData(){
-        var mLocationRequest = LocationRequest()
-        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        mLocationRequest.interval = 1000
-        mLocationRequest.numUpdates = 1
-
-        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper()!!)
-
-    }
-
-    private val mLocationCallback = object : LocationCallback(){
-        override fun onLocationResult(locationResult: LocationResult) {
-            val mLastLocation: Location = locationResult.lastLocation
-            mLatitude = mLastLocation.latitude
-            mLongitude = mLastLocation.longitude
-            val addressTask = GetAddressFromLatLng(this@AddHappyPlaceActivity, mLatitude, mLongitude)
-            addressTask.setAddressListener(object: GetAddressFromLatLng.AddressListener{
-                override fun onAddressFound(address: String){
-                    binding?.location?.setText(address)
-                }
-                override fun onError(){
-                    Log.e("Get Address::", "Something went wrong")
-                }
-            })
-        }
-    }
 
     //Implementing the onCLickListener for the TILs in the activity
     override fun onClick(v: View?) {
@@ -142,7 +111,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                     cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH))
             }
 
-            binding?.tvSelect -> {
+            binding?.llImage -> {
                 val pictureDialog = AlertDialog.Builder(this)
                 pictureDialog.setTitle("Select Action")
                 val pictureDialogItems = arrayOf("Select Photo from Gallery", "Capture Photo from Camera")
@@ -153,6 +122,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                         1 -> takePhotoFromCamera()
                     }
                 }
+                pictureDialog.show()
             }
 
             binding?.location ->{
@@ -237,6 +207,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
             }
         }
     }
+
+
     //Printing out/showing the selected date in text input layout for date
     private fun updateDateInView(){
         val myFormat = "dd.MM.yyyy"
@@ -292,6 +264,41 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                     showRationaleForPermissions()
                 }
             }).onSameThread().check()
+    }
+
+    private val mLocationCallback = object : LocationCallback(){
+        override fun onLocationResult(locationResult: LocationResult) {
+            val mLastLocation: Location = locationResult.lastLocation
+            mLatitude = mLastLocation.latitude
+            mLongitude = mLastLocation.longitude
+            val addressTask = GetAddressFromLatLng(this@AddHappyPlaceActivity, mLatitude, mLongitude)
+            addressTask.setAddressListener(object: GetAddressFromLatLng.AddressListener{
+                override fun onAddressFound(address: String){
+                    binding?.location?.setText(address)
+                }
+                override fun onError(){
+                    Log.e("Get Address::", "Something went wrong")
+                }
+            })
+        }
+    }
+
+    private fun isLocationEnabled(): Boolean{
+        val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+    @SuppressLint("MissingPermission")
+
+    private fun requestNewLocationData(){
+        val mLocationRequest = LocationRequest()
+        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        mLocationRequest.interval = 0
+        mLocationRequest.fastestInterval = 0
+        mLocationRequest.numUpdates = 1
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper()!!)
+
     }
 
     private fun takePhotoFromCamera(){
